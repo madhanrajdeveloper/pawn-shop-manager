@@ -2,6 +2,7 @@
 import { Link, Outlet } from 'react-router-dom';
 import { LayoutDashboard, Users, CircleDollarSign, HardDriveDownload, Printer, SquaresIntersect, ShoppingBasket } from 'lucide-react';
 import apiClient from '../api/client';
+import logo from '../assets/logo.png';
 
 export default function Layout() {
     const handleBackup = async () => {
@@ -17,8 +18,9 @@ export default function Layout() {
         <div className="flex h-screen bg-gray-100 text-gray-900 font-sans">
             {/* Sidebar */}
             <aside className="w-64 bg-slate-900 text-white flex flex-col">
-                <div className="p-6 text-2xl font-bold border-b border-slate-800 text-yellow-400">
-                    🏅 Gold Pawn
+                <div className="p-6 text-2xl font-bold border-b border-slate-800 text-yellow-400 flex gap-x-4 items-center align-middle">
+                     <img src={logo} alt="Logo" />
+                     <p>Pawn Shop</p>
                 </div>
                 <nav className="flex-1 p-4 space-y-2">
                     <Link to="/" className="flex items-center gap-3 p-3 rounded hover:bg-slate-800 transition">
