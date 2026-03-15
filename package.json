@@ -1,5 +1,5 @@
 {
-  "name": "pawn-shop-management",
+  "name": "pawn-shop-manager",
   "version": "1.0.0",
   "main": "main.js",
   "scripts": {
@@ -8,15 +8,27 @@
   },
   "author": "Madhanraj J R",
   "description": "Pawn Shop Management Software",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/madhanrajdeveloper/pawn-shop-manager.git"
+  },
   "build": {
     "appId": "com.pawnshop.management",
-    "productName": "Pawn Shop Management Software",
+    "productName": "Madhan Pawn Shop",
     "directories": {
       "output": "release"
     },
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "madhanrajdeveloper",
+        "repo": "pawn-shop-manager"
+      }
+    ],
     "win": {
       "target": "nsis",
-      "icon": "build/icon.ico"
+      "icon": "build/icon.ico",
+      "publish": ["github"]
     },
     "nsis": {
       "oneClick": false,
@@ -36,9 +48,7 @@
       {
         "from": "frontend/dist",
         "to": "dist",
-        "filter": [
-          "**/*"
-        ]
+        "filter": ["**/*"]
       }
     ]
   },
