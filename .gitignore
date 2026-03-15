@@ -1,0 +1,17 @@
+# Node
+node_modules/
+dist/
+release/
+
+# Python
+venv/
+__pycache__/
+*.pyc
+
+# Database & Sensitive
+*.db
+.env
+
+# OS Files
+.DS_Store
+Thumbs.db
