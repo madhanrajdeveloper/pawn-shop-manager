@@ -3,11 +3,16 @@ const { app, BrowserWindow } = require('electron');
 const path = require('path');
 const { spawn } = require('child_process');
 
-let mainWindow;
+let mainWindow = new BrowserWindow({
+  title: "Pawn Shop Management",
+  width: 1200,
+  height: 800,
+});
 let apiProcess = null;
 
 function createWindow() {
   mainWindow = new BrowserWindow({
+    icon: path.join(__dirname, 'build/icon.ico'),
     width: 1280,
     height: 800,
     webPreferences: {

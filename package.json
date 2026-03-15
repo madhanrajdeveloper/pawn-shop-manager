@@ -1,5 +1,5 @@
 {
-  "name": "gold-pawn-manager",
+  "name": "pawn-shop-management",
   "version": "1.0.0",
   "main": "main.js",
   "scripts": {
@@ -7,10 +7,10 @@
     "build:exe": "electron-builder --win"
   },
   "author": "Madhanraj J R",
-  "description": "Desktop Pawn Shop Management Software",
+  "description": "Pawn Shop Management Software",
   "build": {
-    "appId": "com.maddy10.pawnshop",
-    "productName": "Gold Pawn Manager",
+    "appId": "com.pawnshop.management",
+    "productName": "Pawn Shop Management Software",
     "directories": {
       "output": "release"
     },
@@ -21,7 +21,9 @@
     "nsis": {
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
-      "createDesktopShortcut": true
+      "createDesktopShortcut": true,
+      "installerIcon": "build/icon.ico",
+      "uninstallerIcon": "build/icon.ico"
     },
     "extraResources": [
       {
@@ -34,7 +36,9 @@
       {
         "from": "frontend/dist",
         "to": "dist",
-        "filter": ["**/*"]
+        "filter": [
+          "**/*"
+        ]
       }
     ]
   },
