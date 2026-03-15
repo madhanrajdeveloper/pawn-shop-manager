@@ -1,4 +1,4 @@
-# 🏅 Madhan Pawn Shop Manager
+# 🏅 Pawn Shop Management Software
 
 A professional-grade desktop application designed for pawn shops to manage gold loans, interest tracking, and gold trading. Built with a modern tech stack to ensure speed, security, and ease of use.
 
