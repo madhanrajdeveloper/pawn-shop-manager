@@ -18,12 +18,16 @@ A professional-grade desktop application designed for pawn shops to manage gold 
 
 ## 📥 Download & Installation
 
-The easiest way to use the software is to download the latest installer:
+### ⚠️ Security Note (Important)
+Since this is an independently developed software and is not digitally signed with a paid Microsoft certificate, you will see a **"Windows protected your PC"** warning during the first installation.
 
-1. Go to the [**Releases**](https://github.com/madhanrajdeveloper/pawn-shop-manager/releases) page.
-2. Download `Pawn Shop Management Software Setup 1.0.0.exe`.
-3. Run the installer and follow the on-screen instructions.
-4. The software will automatically update itself whenever a new version is released on GitHub.
+**To install safely:**
+1. Download the `.exe` from the link below.
+2. Run the installer.
+3. Click **"More info"** on the blue warning screen.
+4. Click **"Run anyway"**.
+
+### [Click here to download the Latest Version](https://github.com/madhanrajdeveloper/pawn-shop-manager/releases/latest)
 
 ---
 
