@@ -21,7 +21,7 @@ A professional-grade desktop application designed for pawn shops to manage gold 
 The easiest way to use the software is to download the latest installer:
 
 1. Go to the [**Releases**](https://github.com/madhanrajdeveloper/pawn-shop-manager/releases) page.
-2. Download `Madhan Pawn Shop Setup 1.0.0.exe`.
+2. Download `Pawn Shop Management Software Setup 1.0.0.exe`.
 3. Run the installer and follow the on-screen instructions.
 4. The software will automatically update itself whenever a new version is released on GitHub.
 
