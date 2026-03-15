@@ -19,7 +19,7 @@ export default function Layout() {
             {/* Sidebar */}
             <aside className="w-64 bg-slate-900 text-white flex flex-col">
                 <div className="p-6 text-2xl font-bold border-b border-slate-800 text-yellow-400 flex gap-x-4 items-center align-middle">
-                     <img src={logo} alt="Logo" width={200} height={200} />
+                     <img src={logo} alt="Logo" width={20} height={20} />
                      <p>Pawn Shop</p>
                 </div>
                 <nav className="flex-1 p-4 space-y-2">
