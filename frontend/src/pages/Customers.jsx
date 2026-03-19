@@ -1,15 +1,15 @@
 import { useEffect } from 'react';
 import useStore from '../store/useStore';
 import { UserPlus, X, Search } from 'lucide-react';
-import { 
-  ModalOverlay, ModalContent, PrimaryButton, 
-  InputField, Label, SelectField 
+import {
+  ModalOverlay, ModalContent, PrimaryButton,
+  InputField, Label, SelectField
 } from '../styles/Components';
 
 export default function Customers() {
-  const { 
+  const {
     customers, loading, fetchCustomers, addCustomer,
-    isCustomerModalOpen, setCustomerModal 
+    isCustomerModalOpen, setCustomerModal
   } = useStore();
 
   useEffect(() => {
@@ -20,7 +20,7 @@ export default function Customers() {
     e.preventDefault();
     const formData = new FormData(e.target);
     const data = Object.fromEntries(formData);
-    
+
     const success = await addCustomer(data);
     if (success) alert("Customer Registered Successfully!");
   };
@@ -114,7 +114,7 @@ export default function Customers() {
                 <Label>Notes</Label>
                 <InputField name="notes" placeholder="Any extra details" />
               </div>
-              
+
               <div className="col-span-2 pt-4">
                 <PrimaryButton type="submit" className="w-full" bg="#10b981">
                   Complete Registration & Sync
