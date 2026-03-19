@@ -46,7 +46,7 @@ export default function Dashboard() {
           <Calendar size={18} /> {stats.today_date}
         </div>
       </div>
-      
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <Card title="Active Loans" value={stats.total_active_loans} icon={FileText} colorClass="bg-blue-100 text-blue-600" />
         <Card title="Outstanding" value={`₹${stats.total_loan_amount_outstanding.toLocaleString()}`} icon={IndianRupee} colorClass="bg-green-100 text-green-600" />
