@@ -69,9 +69,9 @@ export default function Layout() {
           <NavItem to="/" icon={LayoutDashboard} label="Dashboard" />
           <NavItem to="/customers" icon={Users} label="Customers" />
           <NavItem to="/loans" icon={CircleDollarSign} label="Loan Ledger" />
-          <NavItem to="/receipts" icon={Printer} label="Receipts" />
           <NavItem to="/interest" icon={SquaresIntersect} label="Interest Tracker" />
           <NavItem to="/buy-sell" icon={ShoppingBasket} label="Buy & Sell" />
+          <NavItem to="/receipts" icon={Printer} label="Receipts" />
           <NavItem to="/aging" icon={Clock} label="Recovery/Aging" />
 
           {/* SECURE ADMIN ACCESS BUTTON */}
