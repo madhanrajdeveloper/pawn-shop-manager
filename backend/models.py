@@ -1,40 +1,60 @@
 # backend/models.py
-from sqlalchemy import Column, Integer, String, Float, Date, ForeignKey
+from sqlalchemy import Column, Integer, String, Float, Date, ForeignKey, Boolean
 from sqlalchemy.orm import relationship
 from database import Base
 
 class Customer(Base):
     __tablename__ = "customers"
 
-    id = Column(String, primary_key=True, index=True)
+    # Retained original primary key structure
+    id = Column(String, primary_key=True, index=True) 
+    
+    # NEW: The Unique ID that will hold "VM01", "VM02", etc.
+    customer_uid = Column(String, unique=True, index=True) 
+    
     full_name = Column(String, index=True)
-    phone_number = Column(String)
+    phone_number = Column(String, unique=True) # Added unique constraint for exact filtering
     alt_phone = Column(String, nullable=True)
     address = Column(String)
+    
     id_proof_type = Column(String)
-    id_proof_number = Column(String)
+    id_proof_number = Column(String, unique=True, nullable=True)
+    pan_number = Column(String, unique=True, nullable=True) # NEW: PAN Card support
+    
     date_registered = Column(Date)
     notes = Column(String, nullable=True)
 
     loans = relationship("Loan", back_populates="customer")
+
 
 class Loan(Base):
     __tablename__ = "loans"
 
     receipt_no = Column(String, primary_key=True, index=True)
     customer_id = Column(String, ForeignKey("customers.id"))
+    
+    # Gold & Loan Details
     gold_description = Column(String)
     gold_weight = Column(Float)
     loan_amount = Column(Float)
-    monthly_interest = Column(Float)
+    monthly_rate_of_interest = Column(Float) # RENAMED from monthly_interest
+    
+    # Status & Dates
     status = Column(String, default="Active")
     loan_date = Column(Date)
-    due_date = Column(Date)
+    # due_date REMOVED as requested
     closed_date = Column(Date, nullable=True)
+    
+    # NEW: Settlement & Return Tracking
+    is_jewel_returned = Column(Boolean, default=False)
+    total_interest_paid = Column(Float, nullable=True, default=0.0)
+    total_settlement_amount = Column(Float, nullable=True, default=0.0)
+    
     remarks = Column(String, nullable=True)
 
     customer = relationship("Customer", back_populates="loans")
     payments = relationship("Payment", back_populates="loan")
+
 
 class Payment(Base):
     __tablename__ = "payments"
@@ -49,17 +69,24 @@ class Payment(Base):
 
     loan = relationship("Loan", back_populates="payments")
 
-# --- NEW TABLE FOR BUY & SELL ---
+
 class BuySell(Base):
     __tablename__ = "buy_sell"
 
-    transaction_id = Column(String, primary_key=True, index=True) # e.g., T001
-    type = Column(String) # 'Buy' or 'Sell'
+    transaction_id = Column(String, primary_key=True, index=True) 
+    type = Column(String) 
     customer_supplier = Column(String)
     gold_weight = Column(Float)
-    purity = Column(String) # Karat (22K, 24K, etc.)
+    purity = Column(String) 
     rate_per_gram = Column(Float)
     total_amount = Column(Float)
     transaction_date = Column(Date)
     payment_mode = Column(String)
     remarks = Column(String, nullable=True)
+
+class Admin(Base):
+    __tablename__ = "admins"
+
+    id = Column(Integer, primary_key=True, index=True)
+    username = Column(String, unique=True, index=True, nullable=False)
+    password_hash = Column(String, nullable=False)

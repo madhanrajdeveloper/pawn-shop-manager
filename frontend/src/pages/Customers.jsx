@@ -1,125 +1,103 @@
-import { useEffect } from 'react';
+// frontend/src/pages/Customers.jsx
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import useStore from '../store/useStore';
-import { UserPlus, X, Search } from 'lucide-react';
-import {
-  ModalOverlay, ModalContent, PrimaryButton,
-  InputField, Label, SelectField
-} from '../styles/Components';
+import { UserPlus, X, Search, User, Phone, Calendar, MapPin, CreditCard, Clipboard, Hash, Bookmark } from 'lucide-react';
+import { FormField, Card, DataTable, Button, ModalOverlay, ModalContent, ModalHeader, FormGrid } from '../components/common/UIComponents';
 
 export default function Customers() {
-  const {
-    customers, loading, fetchCustomers, addCustomer,
-    isCustomerModalOpen, setCustomerModal
-  } = useStore();
+  const navigate = useNavigate(); 
+  const { customers, loading, fetchCustomers, addCustomer, isCustomerModalOpen, setCustomerModal } = useStore();
+  const [searchTerm, setSearchTerm] = useState('');
 
-  useEffect(() => {
-    fetchCustomers();
-  }, [fetchCustomers]);
+  useEffect(() => { fetchCustomers(); }, [fetchCustomers]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
     const data = Object.fromEntries(formData);
-
     const success = await addCustomer(data);
-    if (success) alert("Customer Registered Successfully!");
+    if (success) {
+      setCustomerModal(false);
+    }
   };
 
-  return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-black text-gray-900">Customers</h1>
-        <PrimaryButton onClick={() => setCustomerModal(true)}>
-          <UserPlus size={20} /> Register New
-        </PrimaryButton>
-      </div>
+  const filteredCustomers = customers.filter(cust => {
+    const term = searchTerm.toLowerCase();
+    const name = cust.full_name?.toLowerCase() || "";
+    const uid = cust.customer_uid?.toLowerCase() || "";
+    return name.includes(term) || cust.phone_number?.includes(term) || uid.includes(term);
+  });
 
-      {/* Table Section */}
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left">
-            <thead className="bg-gray-50 text-gray-500 text-xs uppercase tracking-widest">
-              <tr>
-                <th className="p-4 font-bold">ID</th>
-                <th className="p-4 font-bold">Full Name</th>
-                <th className="p-4 font-bold">Phone</th>
-                <th className="p-4 font-bold">Address</th>
-                <th className="p-4 font-bold">ID Proof</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-100">
-              {loading ? (
-                <tr><td colSpan="5" className="p-10 text-center text-gray-400">Loading Customers...</td></tr>
-              ) : customers.map((cust) => (
-                <tr key={cust.id} className="hover:bg-blue-50/50 transition">
-                  <td className="p-4 font-bold text-blue-600">{cust.id}</td>
-                  <td className="p-4 font-semibold text-gray-800">{cust.full_name}</td>
-                  <td className="p-4 text-gray-600">{cust.phone_number}</td>
-                  <td className="p-4 text-gray-500 truncate max-w-xs">{cust.address}</td>
-                  <td className="p-4 text-gray-600 text-sm font-medium">
-                    {cust.id_proof_type}: {cust.id_proof_number}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+  return (
+    <div className="space-y-4 animate-in fade-in duration-300">
+      
+      {/* HEADER SECTION (CLEAN ADMIN LOOK) */}
+      <div className="flex justify-between items-center bg-white p-4 rounded-2xl border border-slate-100 shadow-sm">
+        <h1 className="text-2xl font-black text-slate-900 tracking-tight">Customer Directory</h1>
+        <div className="flex items-center gap-3">
+          <div className="w-64">
+            <FormField icon={Search} placeholder="Search Name, Phone, UID..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+          </div>
+          <Button onClick={() => setCustomerModal(true)}>
+            <UserPlus size={16} /> Register Client
+          </Button>
         </div>
       </div>
 
-      {/* POPUP MODAL FOR REGISTRATION */}
+      {/* COMPACT DATA TABLE */}
+      <DataTable headers={['ID', 'Name', 'Phone', 'Identity Proof', 'Residential Address']}>
+        {filteredCustomers.map((cust) => (
+          <tr key={cust.id} onClick={() => navigate(`/customer/${cust.id}`)} className="hover:bg-indigo-50/40 cursor-pointer transition-colors group">
+            <td className="p-3">
+              <span className="px-2 py-0.5 bg-slate-100 text-slate-600 rounded text-[10px] font-bold group-hover:bg-indigo-600 group-hover:text-white transition-colors">
+                {cust.customer_uid}
+              </span>
+            </td>
+            <td className="p-3 font-bold text-slate-800">{cust.full_name}</td>
+            <td className="p-3 font-medium text-slate-600">{cust.phone_number}</td>
+            <td className="p-3 text-xs font-semibold text-slate-600">{cust.id_proof_type}: {cust.id_proof_number}</td>
+            <td className="p-3 text-slate-400 text-xs truncate max-w-xs">{cust.address}</td>
+          </tr>
+        ))}
+      </DataTable>
+
+      {/* SEAMLESS MODAL (NO SCROLL NEEDED) */}
       {isCustomerModalOpen && (
         <ModalOverlay>
-          <ModalContent size="650px">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-black text-gray-800">New Registration</h2>
-              <button onClick={() => setCustomerModal(false)} className="text-gray-400 hover:text-red-500">
-                <X size={24} />
+          <ModalContent size="850px">
+            <ModalHeader>
+              <h2 className="text-lg font-black text-slate-800 uppercase tracking-tighter flex items-center gap-2">
+                <UserPlus size={18} className="text-indigo-600" /> New Client Registration
+              </h2>
+              <button onClick={() => setCustomerModal(false)} className="hover:text-red-500 transition-colors">
+                <X size={20} />
               </button>
-            </div>
+            </ModalHeader>
 
-            <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-5">
-              <div>
-                <Label>Full Name *</Label>
-                <InputField name="full_name" required placeholder="Enter name" />
-              </div>
-              <div>
-                <Label>Phone Number *</Label>
-                <InputField name="phone_number" required placeholder="98765..." />
-              </div>
-              <div>
-                <Label>Alternate Phone</Label>
-                <InputField name="alt_phone" placeholder="Optional" />
-              </div>
-              <div>
-                <Label>Date Registered</Label>
-                <InputField name="date_registered" type="date" defaultValue={new Date().toISOString().split('T')[0]} />
-              </div>
-              <div className="col-span-2">
-                <Label>Residential Address *</Label>
-                <InputField name="address" required placeholder="Full address" />
-              </div>
-              <div>
-                <Label>ID Proof Type</Label>
-                <SelectField name="id_proof_type">
-                  <option>Aadhaar</option>
-                  <option>PAN Card</option>
-                  <option>Voter ID</option>
-                </SelectField>
-              </div>
-              <div>
-                <Label>ID Proof Number</Label>
-                <InputField name="id_proof_number" required placeholder="Number" />
-              </div>
-              <div className="col-span-2">
-                <Label>Notes</Label>
-                <InputField name="notes" placeholder="Any extra details" />
-              </div>
+            <form onSubmit={handleSubmit} className="p-5">
+              <FormGrid>
+                {/* Spreading fields across columns reduce modal height */}
+                <div className="col-span-2"><FormField label="Full Name *" name="full_name" icon={User} required placeholder="Legal Name" /></div>
+                <FormField label="Phone Number *" name="phone_number" icon={Phone} required placeholder="Primary Mobile" />
+                
+                <FormField label="Alternate Phone" name="alt_phone" icon={Phone} placeholder="Optional" />
+                <FormField label="Identity Proof Type" name="id_proof_type" icon={Bookmark} placeholder="Aadhaar/PAN" required />
+                <FormField label="ID Card Number *" name="id_proof_number" icon={Hash} required placeholder="Number" />
+                
+                <div className="col-span-2"><FormField label="Residential Address *" name="address" icon={MapPin} required placeholder="Door No, Street, City" /></div>
+                <FormField label="PAN (Optional)" name="pan_number" icon={CreditCard} placeholder="ABCDE1234F" />
 
-              <div className="col-span-2 pt-4">
-                <PrimaryButton type="submit" className="w-full" bg="#10b981">
-                  Complete Registration & Sync
-                </PrimaryButton>
-              </div>
+                <div className="col-span-2"><FormField label="Notes" name="notes" icon={Clipboard} placeholder="Extra remarks about client..." /></div>
+                <FormField label="Date Registered" name="date_registered" type="date" defaultValue={new Date().toISOString().split('T')[0]} />
+
+                {/* THE BUTTON - WILL BE VISIBLE WITHOUT SCROLLING */}
+                <div className="full-width pt-2">
+                  <Button type="submit" className="w-full py-3.5 text-sm uppercase tracking-widest bg-indigo-600 shadow-indigo-200 shadow-lg hover:shadow-none transition-all">
+                    Complete Registration & Sync
+                  </Button>
+                </div>
+              </FormGrid>
             </form>
           </ModalContent>
         </ModalOverlay>
