@@ -1,13 +1,13 @@
 {
   "name": "pawn-shop-manager",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
     "build:exe": "electron-builder --win"
   },
   "author": "Madhanraj J R",
-  "description": "Pawn Shop Management Software",
+  "description": "Pawn Shop Management Software V2",
   "repository": {
     "type": "git",
     "url": "https://github.com/madhanrajdeveloper/pawn-shop-manager.git"
@@ -27,8 +27,7 @@
     ],
     "win": {
       "target": "nsis",
-      "icon": "build/icon.ico",
-      "publish": ["github"]
+      "icon": "build/icon.ico"
     },
     "nsis": {
       "oneClick": false,
@@ -39,7 +38,7 @@
     },
     "extraResources": [
       {
-        "from": "backend/dist/pawnshop_api.exe",
+        "from": "backend/dist/PawnShop/PawnShop.exe",
         "to": "pawnshop_api.exe"
       }
     ],
