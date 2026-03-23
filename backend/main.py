@@ -8,25 +8,33 @@ from typing import List
 import os
 import uuid
 import sys
-from datetime import date
+import io
 import bcrypt
+from datetime import date
 
 import models
 import schemas
 from database import engine, get_db, SessionLocal
 from excel_sync import export_to_excel
 
+# --- UNICODE SAFETY FIX ---
+# This prevents 'charmap' codec crashes when running as a windowed EXE on Windows
+if sys.stdout is not None:
+    sys.stdout = io.TextIOWrapper(sys.stdout.detach(), encoding='utf-8', errors='ignore')
+if sys.stderr is not None:
+    sys.stderr = io.TextIOWrapper(sys.stderr.detach(), encoding='utf-8', errors='ignore')
+
 # --- ONE-TIME AUTO DELETE FUNCTION (Database v2.0 Migration) ---
 DB_FILE = "pawnshop.db"
 MARKER_FILE = "v2_migration_done.txt"
 
 if os.path.exists(DB_FILE) and not os.path.exists(MARKER_FILE):
-    print("⚠️ Old database detected. Wiping for v2.0 upgrade...")
+    print("MIGRATION: Old database detected. Wiping for v2.0 upgrade...")
     try:
         os.remove(DB_FILE)
-        print("✅ Old database deleted successfully.")
+        print("MIGRATION: Old database deleted successfully.")
     except Exception as e:
-        print(f"❌ Could not delete database: {e}")
+        print(f"MIGRATION ERROR: Could not delete database: {e}")
     
     with open(MARKER_FILE, "w") as f:
         f.write("Database upgraded to v2.0. Do not delete this file.")
@@ -34,7 +42,7 @@ if os.path.exists(DB_FILE) and not os.path.exists(MARKER_FILE):
 # Create tables in SQLite
 models.Base.metadata.create_all(bind=engine)
 
-# --- ADMIN AUTHENTICATION SETUP (NATIVE BCRYPT) ---
+# --- ADMIN AUTHENTICATION SETUP ---
 def init_default_admin():
     db = SessionLocal()
     try:
@@ -42,10 +50,11 @@ def init_default_admin():
         if not admin_exists:
             salt = bcrypt.gensalt()
             default_hash = bcrypt.hashpw("admin123".encode('utf-8'), salt).decode('utf-8')
+            
             new_admin = models.Admin(username="admin", password_hash=default_hash)
             db.add(new_admin)
             db.commit()
-            print("✅ Default Admin account created (admin / admin123)")
+            print("ADMIN: Default account created (admin / admin123)")
     finally:
         db.close()
 
@@ -56,11 +65,15 @@ app = FastAPI(title="Pawn Shop Management API v2.0")
 # --- CORS MIDDLEWARE ---
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], # Simplified for internal desktop use
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+@app.get("/")
+def read_root():
+    return {"message": "Pawn Shop Backend v2.0 is running smoothly!"}
 
 # --- AUTO-GENERATION LOGIC ---
 def get_next_customer_uid(db: Session) -> str:
@@ -214,7 +227,7 @@ def get_summary(db: Session = Depends(get_db)):
 def trigger_excel_export(db: Session = Depends(get_db)):
     return {"path": export_to_excel(db)}
 
-# --- FRONTEND SERVING (For Standalone EXE Mode) ---
+# --- FRONTEND SERVING ---
 if getattr(sys, 'frozen', False):
     frontend_dist = os.path.join(sys._MEIPASS, "dist")
 else:
