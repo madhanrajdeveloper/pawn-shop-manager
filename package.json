@@ -14,7 +14,7 @@
   },
   "build": {
     "appId": "com.pawnshop.management",
-    "productName": "Madhan Pawn Shop",
+    "productName": "Pawn Shop Management Software",
     "directories": {
       "output": "release"
     },
