@@ -33,13 +33,18 @@
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
       "createDesktopShortcut": true,
+      "deleteAppDataOnUninstall": false,
       "installerIcon": "build/icon.ico",
-      "uninstallerIcon": "build/icon.ico"
+      "uninstallerIcon": "build/icon.ico",
+      "uninstallDisplayName": "Pawn Shop Management Software"
     },
     "extraResources": [
       {
-        "from": "backend/dist/PawnShop/PawnShop.exe",
-        "to": "pawnshop_api.exe"
+        "from": "backend/dist/PawnShop",
+        "to": "backend_server",
+        "filter": [
+          "**/*"
+        ]
       }
     ],
     "files": [
@@ -47,7 +52,9 @@
       {
         "from": "frontend/dist",
         "to": "dist",
-        "filter": ["**/*"]
+        "filter": [
+          "**/*"
+        ]
       }
     ]
   },
