@@ -1,5 +1,6 @@
 // src/store/useStore.js
 import { create } from 'zustand';
+import apiClient from '../api/client';
 import {
     CustomerService,
     LoanService,
@@ -17,13 +18,43 @@ const useStore = create((set, get) => ({
     stats: {},
     loading: false,
 
+    // --- NEW: TOAST STATE ---
+    toast: { message: '', type: '', visible: false },
+
+    showToast: (message, type = 'success') => {
+        set({ toast: { message, type, visible: true } });
+        setTimeout(() => set({ toast: { message: '', type: '', visible: false } }), 3000);
+    },
+
+    // --- ADMIN AUTH STATE ---
+    isAdminAuthenticated: false,
+
+    loginAdmin: async (username, password) => {
+        try {
+            const response = await apiClient.post('/admin/login', { username, password });
+            if (response.data.success) {
+                set({ isAdminAuthenticated: true });
+                get().showToast("Welcome back, Admin!", "success");
+                return true;
+            }
+            return false;
+        } catch (error) {
+            get().showToast("Invalid Credentials", "danger");
+            return false;
+        }
+    },
+
+    logoutAdmin: () => {
+        set({ isAdminAuthenticated: false });
+        get().showToast("Logged out safely", "info");
+    },
+
     // --- MODAL VISIBILITY ---
     isCustomerModalOpen: false,
     isLoanModalOpen: false,
     isPaymentModalOpen: false,
     isBuySellModalOpen: false,
 
-    // --- MODAL ACTIONS ---
     setCustomerModal: (isOpen) => set({ isCustomerModalOpen: isOpen }),
     setLoanModal: (isOpen) => set({ isLoanModalOpen: isOpen }),
     setPaymentModal: (isOpen) => set({ isPaymentModalOpen: isOpen }),
@@ -87,16 +118,16 @@ const useStore = create((set, get) => ({
         }
     },
 
-    // --- CREATE ACTIONS (Optimized with Type Conversion) ---
+    // --- CREATE ACTIONS ---
     addCustomer: async (formData) => {
         try {
             await CustomerService.create(formData);
             await get().fetchCustomers();
-            await get().fetchDashboardStats();
+            get().showToast("Customer Registered Successfully!");
             set({ isCustomerModalOpen: false });
             return true;
         } catch (err) {
-            console.error("Add Customer Error:", err);
+            get().showToast("Failed to add customer", "danger");
             return false;
         }
     },
@@ -107,15 +138,16 @@ const useStore = create((set, get) => ({
                 ...loanData,
                 gold_weight: parseFloat(loanData.gold_weight) || 0,
                 loan_amount: parseFloat(loanData.loan_amount) || 0,
-                monthly_interest: parseFloat(loanData.monthly_interest) || 0,
+                monthly_rate_of_interest: parseFloat(loanData.monthly_rate_of_interest) || 0,
             };
             await LoanService.create(finalData);
             await get().fetchLoans();
             await get().fetchDashboardStats();
+            get().showToast("Loan Issued Successfully!");
             set({ isLoanModalOpen: false });
             return true;
         } catch (err) {
-            console.error("Add Loan Error:", err);
+            get().showToast("Error processing loan", "danger");
             return false;
         }
     },
@@ -125,22 +157,15 @@ const useStore = create((set, get) => ({
             const finalData = {
                 ...paymentData,
                 amount_paid: parseFloat(paymentData.amount_paid) || 0,
-                balance_due: 0, // Backend logic will overwrite this
                 payment_date: paymentData.payment_date || new Date().toISOString().split('T')[0],
             };
-
             await PaymentService.create(finalData);
-            
-            // Parallel refresh to keep UI snappy
-            await Promise.all([
-                get().fetchPayments(),
-                get().fetchDashboardStats()
-            ]);
-
+            await Promise.all([get().fetchPayments(), get().fetchDashboardStats()]);
+            get().showToast("Interest Payment Recorded!");
             set({ isPaymentModalOpen: false });
             return true;
         } catch (err) {
-            console.error("Payment Submission Error:", err);
+            get().showToast("Payment failed", "danger");
             return false;
         }
     },
@@ -152,15 +177,15 @@ const useStore = create((set, get) => ({
                 gold_weight: parseFloat(formData.gold_weight) || 0,
                 rate_per_gram: parseFloat(formData.rate_per_gram) || 0,
                 total_amount: parseFloat(formData.total_amount) || 0,
-                payment_mode: formData.payment_mode || "Cash"
             };
             await BuySellService.create(finalData);
             await get().fetchBuySell();
             await get().fetchDashboardStats();
+            get().showToast("Transaction Saved!");
             set({ isBuySellModalOpen: false });
             return true;
         } catch (err) {
-            console.error("Add BuySell Error:", err);
+            get().showToast("Transaction failed", "danger");
             return false;
         }
     }

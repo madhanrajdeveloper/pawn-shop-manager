@@ -11,6 +11,7 @@ class CustomerBase(BaseModel):
     address: str
     id_proof_type: str
     id_proof_number: str
+    pan_number: Optional[str] = None # NEW
     date_registered: date
     notes: Optional[str] = None
 
@@ -19,6 +20,7 @@ class CustomerCreate(CustomerBase):
 
 class Customer(CustomerBase):
     id: str  
+    customer_uid: str # NEW: For "VM01" output
     class Config:
         from_attributes = True
 
@@ -28,10 +30,10 @@ class LoanBase(BaseModel):
     gold_description: str
     gold_weight: float
     loan_amount: float
-    monthly_interest: float
+    monthly_rate_of_interest: float # RENAMED
     status: str = "Active"
     loan_date: date
-    due_date: date
+    # due_date REMOVED
     remarks: Optional[str] = None
 
 class LoanCreate(LoanBase):
@@ -40,16 +42,19 @@ class LoanCreate(LoanBase):
 class Loan(LoanBase):
     receipt_no: str  
     closed_date: Optional[date] = None
+    is_jewel_returned: bool = False # NEW
+    total_interest_paid: Optional[float] = 0.0 # NEW
+    total_settlement_amount: Optional[float] = 0.0 # NEW
+    
     class Config:
         from_attributes = True
 
-# --- Payment / Interest Tracker Schemas ---
+# --- Payment Tracker Schemas (Unchanged) ---
 class PaymentBase(BaseModel):
     receipt_no: str
     payment_month: str
     amount_paid: float
     payment_mode: str
-    # Made optional with defaults so the API accepts partial payloads
     balance_due: Optional[float] = 0.0
     payment_date: Optional[date] = None
 
@@ -61,16 +66,16 @@ class Payment(PaymentBase):
     class Config:
         from_attributes = True
 
-# --- Buy & Sell Schemas ---
+# --- Buy & Sell Schemas (Unchanged) ---
 class BuySellBase(BaseModel):
-    type: str  # 'Buy' or 'Sell'
+    type: str  
     customer_supplier: str
     gold_weight: float
     purity: str  
     rate_per_gram: float
     total_amount: float
     transaction_date: date
-    payment_mode: str = "Cash" # Default value prevents 422 errors
+    payment_mode: str = "Cash" 
     remarks: Optional[str] = None
 
 class BuySellCreate(BuySellBase):
@@ -80,3 +85,23 @@ class BuySell(BuySellBase):
     transaction_id: str
     class Config:
         from_attributes = True
+
+# --- NEW: Master Database Schema ---
+class MasterDatabaseRecord(BaseModel):
+    customer_uid: str
+    full_name: str
+    phone_number: str
+    pan_number: Optional[str]
+    receipt_no: str
+    gold_description: str
+    loan_amount: float
+    status: str
+    loan_date: date
+    closed_date: Optional[date] = None
+    total_settlement_amount: Optional[float] = 0.0
+    is_jewel_returned: bool
+
+# --- Admin Auth Schemas ---
+class AdminAuth(BaseModel):
+    username: str
+    password: str
