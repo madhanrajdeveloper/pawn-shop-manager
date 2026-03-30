@@ -38,13 +38,13 @@
    'D:\\Madhanraj\\External\\Desktop '
    'Software\\Shibi-Client\\pawn-shop-manager\\backend\\venv\\Lib\\site-packages\\PyInstaller\\loader\\pyiboot01_bootstrap.py',
    'PYSOURCE'),
-  ('pyi_rth_inspect',
-   'D:\\Madhanraj\\External\\Desktop '
-   'Software\\Shibi-Client\\pawn-shop-manager\\backend\\venv\\Lib\\site-packages\\PyInstaller\\hooks\\rthooks\\pyi_rth_inspect.py',
-   'PYSOURCE'),
   ('pyi_rth_pkgutil',
    'D:\\Madhanraj\\External\\Desktop '
    'Software\\Shibi-Client\\pawn-shop-manager\\backend\\venv\\Lib\\site-packages\\PyInstaller\\hooks\\rthooks\\pyi_rth_pkgutil.py',
+   'PYSOURCE'),
+  ('pyi_rth_inspect',
+   'D:\\Madhanraj\\External\\Desktop '
+   'Software\\Shibi-Client\\pawn-shop-manager\\backend\\venv\\Lib\\site-packages\\PyInstaller\\hooks\\rthooks\\pyi_rth_inspect.py',
    'PYSOURCE'),
   ('pyi_rth_setuptools',
    'D:\\Madhanraj\\External\\Desktop '

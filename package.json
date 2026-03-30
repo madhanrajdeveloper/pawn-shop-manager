@@ -8,23 +8,12 @@
   },
   "author": "Madhanraj J R",
   "description": "Pawn Shop Management Software V2",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/madhanrajdeveloper/pawn-shop-manager.git"
-  },
   "build": {
     "appId": "com.pawnshop.management",
     "productName": "Pawn Shop Management Software",
     "directories": {
       "output": "release"
     },
-    "publish": [
-      {
-        "provider": "github",
-        "owner": "madhanrajdeveloper",
-        "repo": "pawn-shop-manager"
-      }
-    ],
     "win": {
       "target": "nsis",
       "icon": "build/icon.ico"
@@ -33,18 +22,15 @@
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
       "createDesktopShortcut": true,
-      "deleteAppDataOnUninstall": false,
-      "installerIcon": "build/icon.ico",
-      "uninstallerIcon": "build/icon.ico",
-      "uninstallDisplayName": "Pawn Shop Management Software"
+      "deleteAppDataOnUninstall": true,
+      "uninstallDisplayName": "Pawn Shop Management Software",
+      "allowElevation": true
     },
     "extraResources": [
       {
         "from": "backend/dist/PawnShop",
         "to": "backend_server",
-        "filter": [
-          "**/*"
-        ]
+        "filter": ["**/*"]
       }
     ],
     "files": [
@@ -52,9 +38,7 @@
       {
         "from": "frontend/dist",
         "to": "dist",
-        "filter": [
-          "**/*"
-        ]
+        "filter": ["**/*"]
       }
     ]
   },

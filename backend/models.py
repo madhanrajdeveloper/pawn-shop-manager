@@ -6,20 +6,23 @@ from database import Base
 class Customer(Base):
     __tablename__ = "customers"
 
-    # Retained original primary key structure
     id = Column(String, primary_key=True, index=True) 
     
-    # NEW: The Unique ID that will hold "VM01", "VM02", etc.
+    # customer_uid stays UNIQUE because it is auto-generated (VM01, VM02)
     customer_uid = Column(String, unique=True, index=True) 
     
     full_name = Column(String, index=True)
-    phone_number = Column(String, unique=True) # Added unique constraint for exact filtering
+    
+    # --- CRITICAL FIXES FOR CLIENT STABILITY ---
+    # We remove unique=True from phone, ID, and PAN. 
+    # This prevents the app from crashing if two customers leave these blank.
+    phone_number = Column(String, index=True) 
     alt_phone = Column(String, nullable=True)
     address = Column(String)
     
     id_proof_type = Column(String)
-    id_proof_number = Column(String, unique=True, nullable=True)
-    pan_number = Column(String, unique=True, nullable=True) # NEW: PAN Card support
+    id_proof_number = Column(String, nullable=True) # REMOVED unique=True
+    pan_number = Column(String, nullable=True)      # REMOVED unique=True
     
     date_registered = Column(Date)
     notes = Column(String, nullable=True)
@@ -33,19 +36,15 @@ class Loan(Base):
     receipt_no = Column(String, primary_key=True, index=True)
     customer_id = Column(String, ForeignKey("customers.id"))
     
-    # Gold & Loan Details
     gold_description = Column(String)
     gold_weight = Column(Float)
     loan_amount = Column(Float)
-    monthly_rate_of_interest = Column(Float) # RENAMED from monthly_interest
+    monthly_rate_of_interest = Column(Float) 
     
-    # Status & Dates
     status = Column(String, default="Active")
     loan_date = Column(Date)
-    # due_date REMOVED as requested
     closed_date = Column(Date, nullable=True)
     
-    # NEW: Settlement & Return Tracking
     is_jewel_returned = Column(Boolean, default=False)
     total_interest_paid = Column(Float, nullable=True, default=0.0)
     total_settlement_amount = Column(Float, nullable=True, default=0.0)
@@ -83,6 +82,7 @@ class BuySell(Base):
     transaction_date = Column(Date)
     payment_mode = Column(String)
     remarks = Column(String, nullable=True)
+
 
 class Admin(Base):
     __tablename__ = "admins"

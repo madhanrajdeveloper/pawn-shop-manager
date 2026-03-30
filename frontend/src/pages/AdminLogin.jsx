@@ -1,5 +1,5 @@
 // frontend/src/pages/AdminLogin.jsx
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useStore from '../store/useStore';
 import apiClient from '../api/client';
@@ -18,7 +18,20 @@ export default function AdminLogin() {
 
   const isRegistrationAllowed = localStorage.getItem('allowAdminReg') === 'true';
 
-  // --- ADDED ASYNC HERE ---
+  // --- THE FIX: Force Electron to focus on the input after the transition ---
+  useEffect(() => {
+    // We wait 350ms to let the "animate-in duration-300" finish perfectly
+    const focusTimer = setTimeout(() => {
+      const usernameInput = document.getElementById('admin-username');
+      if (usernameInput) {
+        usernameInput.focus();
+        usernameInput.click(); // Failsafe to break through any ghost overlays
+      }
+    }, 350);
+
+    return () => clearTimeout(focusTimer);
+  }, [isRegistering]); // Re-run if they toggle the registration view
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
@@ -29,7 +42,6 @@ export default function AdminLogin() {
         return;
       }
       try {
-        // Saves to your FastAPI Database
         await apiClient.post('/admin/register', { username, password });
         alert('New Admin created securely in database!');
         
@@ -41,7 +53,6 @@ export default function AdminLogin() {
         setError(err.response?.data?.detail || 'Failed to create admin. Username might exist.');
       }
     } else {
-      // --- ADDED AWAIT HERE ---
       const isSuccess = await loginAdmin(username, password);
       if (isSuccess) {
         navigate('/admin-dashboard');
@@ -52,7 +63,8 @@ export default function AdminLogin() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-[75vh] animate-in zoom-in-95 duration-300">
+    // Added 'relative z-10' to ensure the form is above any potential ghost layers
+    <div className="flex items-center justify-center min-h-[75vh] relative z-10 animate-in zoom-in-95 duration-300">
       <Card className="w-full max-w-sm p-8 shadow-2xl border-none">
         
         <div className="flex flex-col items-center mb-8 text-center">
@@ -75,6 +87,7 @@ export default function AdminLogin() {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <FormField 
+            id="admin-username" // Hooked up to the useEffect above
             label="Username" 
             icon={User} 
             type="text" 
@@ -82,6 +95,7 @@ export default function AdminLogin() {
             onChange={(e) => setUsername(e.target.value)}
             placeholder="Enter admin ID"
             required
+            autoFocus // React's native attempt to focus
           />
 
           <FormField 

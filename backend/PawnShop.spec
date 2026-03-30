@@ -3,10 +3,10 @@
 
 a = Analysis(
     ['run_api.py'],
-    pathex=[],
+    pathex=['.'],
     binaries=[],
     datas=[],
-    hiddenimports=[],
+    hiddenimports=['api', 'models', 'schemas', 'database', 'excel_sync'],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],

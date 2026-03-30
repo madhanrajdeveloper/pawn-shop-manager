@@ -80,9 +80,32 @@ export default function Customers() {
                 {/* Spreading fields across columns reduce modal height */}
                 <div className="col-span-2"><FormField label="Full Name *" name="full_name" icon={User} required placeholder="Legal Name" /></div>
                 <FormField label="Phone Number *" name="phone_number" icon={Phone} required placeholder="Primary Mobile" />
-                
                 <FormField label="Alternate Phone" name="alt_phone" icon={Phone} placeholder="Optional" />
-                <FormField label="Identity Proof Type" name="id_proof_type" icon={Bookmark} placeholder="Aadhaar/PAN" required />
+                
+                {/* NEW ID PROOF DROPDOWN */}
+                <div className="flex flex-col gap-1">
+                  <label className="text-xs font-bold text-slate-500 uppercase tracking-widest pl-1">Identity Proof Type *</label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                      <Bookmark size={16} />
+                    </div>
+                    <select
+                      name="id_proof_type"
+                      required
+                      className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 appearance-none"
+                      defaultValue="Aadhaar"
+                    >
+                      <option value="" disabled>Select ID Type</option>
+                      <option value="Aadhaar">Aadhaar Card</option>
+                      <option value="Voter ID">Voter ID</option>
+                      <option value="Driving License">Driving License</option>
+                      <option value="PAN Card">PAN Card</option>
+                      <option value="Passport">Passport</option>
+                      <option value="Other">Other</option>
+                    </select>
+                  </div>
+                </div>
+
                 <FormField label="ID Card Number *" name="id_proof_number" icon={Hash} required placeholder="Number" />
                 
                 <div className="col-span-2"><FormField label="Residential Address *" name="address" icon={MapPin} required placeholder="Door No, Street, City" /></div>
